@@ -1,0 +1,100 @@
+disease,symptoms,cures,doctor,risk level
+flu,"fever , cough , sore throat , runny stuffy nose , muscle ache , headache , fatigue","over-the-counter medications,rest,fluids",family doctor,low
+bronchitis,"cough , mucus production , shortness breath , chest pain","antibiotics,over-the-counter medications,rest,fluids","family doctor,pulmonologist",low
+pneumonia,"fever , cough , shortness breath , chest pain , fatigue","antibiotics,over-the-counter medications,rest,fluids","family doctor,pulmonologist",moderate
+heart attack,"chest pain , shortness breath , nausea , vomiting , lightheadedness , sweating",emergency medical services,cardiologist,high
+stroke,"sudden weakness , numbness one side body , confusion , difficulty speaking , trouble seeing one eye , severe headache",emergency medical services,neurologist ,high
+cancer,"lump , unexplained weight loss , fatigue , change bowel , bladder habit , persistent cough , indigestion , unexplained bleeding discharge","surgery,chemotherapy,radiation therapy ",oncologist,varies
+diabetes,"increased thirst , frequent urination , unexplained weight loss , fatigue , blurred vision , cut slow heal","diet,exercise,medication",endocrinologist,high
+alzheimer's disease,"memory loss , confusion , difficulty thinking , change personality behavior","there is no cure for alzheimer's disease,but there are treatments that can help manage the symptoms",neurologist,high 
+arthritis,"pain , stiffness , swelling , inflammation joint","medication,physical therapy,lifestyle changes",rheumatologist,varies
+adenovirus,"fever , sore throat , cough , conjunctivitis , rash , pink eye","antibiotics,over-the-counter medications,rest,fluids",family doctor,low
+aflatoxicosis,"vomiting , diarrhea , jaundice , liver damage , death","there is no cure for aflatoxicosis,but treatment may include supportive care,liver transplantation",gastroenterologist,high
+alcoholism,"physical dependence alcohol , tolerance alcohol , withdrawal symptom , impaired judgment , memory problem , liver damage , heart disease , cancer"," treatment for alcoholism may include counseling,medication,support groups"," psychiatrist,addiction specialist",high
+allergic rhinitis,"runny nose , sneezing , itchy eye , itchy nose , throat , palate","over-the-counter medications,allergy shots",allergist,low
+alzheimer's disease,"memory loss , confusion , difficulty thinking , change personality behavior","there is no cure for alzheimer's disease,but there are treatments that can help manage the symptoms",neurologist,high
+anemia,"fatigue , shortness breath , pale skin , lightheadedness , dizziness", , hematologist ,varies
+anxiety disorder,"excessive worry , fear , anxiety interfere daily life","treatment for anxiety disorders may include therapy,medication,combination of both","psychologist,psychiatrist",varies
+appendicitis,"pain lower right abdomen , nausea , vomiting , fever",appendectomy,surgeon ,high
+arthritis,"pain , stiffness , swelling , inflammation joint","medication,physical therapy,lifestyle changes",rheumatologist,varies
+asperger syndrome,"difficulty social interaction , repetitive behavior , restricted interest","there is no cure for asperger syndrome,but there are treatments that can help manage the symptoms","psychologist,psychiatrist",varies
+asthma,"wheezing , shortness breath , coughing , chest tightness","treatment for asthmmay include medication,lifestyle changes,allergy shots"," allergist,pulmonologist",varies
+bacterial meningitis,"fever , headache , stiff neck , nausea , vomiting , sensitivity light",antibiotics,"neurologist,neurosurgeon",high
+bipolar disorder,"extreme mood swing , manito depression","treatment for bipolar disorder may include medication,therapy,combination of both"," psychologist,psychiatrist",varies
+bladder cancer,"blood urine , pain burning urinating , frequent urination , urgency urinate , incontinence","surgery,chemotherapy,radiation therapy",urologist,high
+blood clot,"pain , swelling , redness , warmth , tenderness affected area , shortness breath , chest pain , difficulty breathing , coughing blood","treatment for blood clot may include medication,surgery,combination of both","cardiologist,hematologist",high
+bronchitis,"cough , mucus production , shortness breath , chest pain","antibiotics,over-the-counter medications,rest,fluids","family doctor,pulmonologist",low
+bursitis,"pain , swelling , inflammation bursa , small sac fluid cushion joint","medication,rest,ice,compression,elevation","family doctor,orthopedist",varies
+cancer,"lump , unexplained weight loss , fatigue , change bowel , bladder habit , persistent cough , indigestion , unexplained bleeding discharge","surgery,chemotherapy,radiation therapy",oncologist,varies
+cervical cancer,"abnormal pap test result , abnormal vaginal bleeding , pain sex","surgery,chemotherapy,radiation therapy",gynecologist,high
+chickenpox,"rash , fever , headache , muscle ache , fatigue","antiviral medication,over-the-counter medications,rest,fluids",family doctor,low
+chronic obstructive pulmonary disease (copd),"chronic bronchitis , emphysema","treatment for copd may include medication,lifestyle changes,oxygen therapy",pulmonologist,varies
+cholesterol,high level cholesterol blood,"diet,exercise,medication",cardiologist,varies
+common cold,"runny nose , sneezing , sore throat , cough , congestion","over-the-counter medications,rest,fluids",family doctor,low
+conjunctivitis,"red , itchy , watery eye","over-the-counter medications,warm compresses","family doctor,ophthalmologist",low
+depression ,"sadness , hopelessness , loss interest activity , change appetite , sleep , energy level","treatment for depression may include medication,therapy,combination of both","psychologist,psychiatrist",varies
+diabetes,"increased thirst , frequent urination , unexplained weight loss , fatigue , blurred vision , cut slow heal","diet,exercise,medication",endocrinologist,high
+diarrhea,"loose , watery stool","over-the-counter medications,rest,fluids",family doctor,low
+eating disorder,disturbance eating behavior lead serious health problem,"treatment for eating disorders may include therapy,medication,support groups","psychologist,psychiatrist",varies
+epilepsy,seizure,"medication,surgery", neurologist ,varies
+fever,elevated body temperature,"over-the-counter medications,rest,fluids",family doctor,low
+food poisoning,"nausea , vomiting , diarrhea , abdominal cramp","over-the-counter medications,rest,fluids",family doctor,low
+gallstones,"pain upper right abdomen , nausea , vomiting , fever",surgery,surgeon ,high
+gonorrhea,"sexually transmitted infection cause burning urination , discharge penis vagina , pain lower abdomen",antibiotics,"urologist,gynecologist",high
+heart disease,"chest pain , shortness breath , fatigue , dizziness , fainting","treatment for heart disease may include medication,lifestyle changes,surgery",cardiologist,high
+hepatitis,inflammation liver,"treatment for hepatitis may include medication,rest,lifestyle changes",gastroenterologist,varies
+herpes,"sexually transmitted infection cause blister genitals , mouth , part body","there is no cure for herpes,but there are treatments that can help manage the symptoms","urologist,gynecologist",high
+influenza,"fever , cough , sore throat , runny stuffy nose , muscle ache , headache , fatigue","over-the-counter medications,rest,fluids",family doctor,low
+irritable bowel syndrome (ibs),"abdominal pain , bloating , constipation , diarrhea","treatment for ibs may include diet,lifestyle changes,medication"," family doctor,gastroenterologist",varies
+kidney stones ,"pain lower back side , nausea , vomiting , blood urine",surgery,urologist,high
+lung cancer,"cough go away , shortness breath , chest pain , unexplained weight loss , fatigue , blood sputum","surgery,chemotherapy,radiation therapy",oncologist,high
+malaria,"fever , chill , sweating , headache , muscle ache , fatigue , vomiting , diarrhea",antimalarial drugs,family doctor,high
+measles,"fever , cough , runny nose , red eye , sore throat , rash",measles vaccine,family doctor,high
+meningitis,"fever , headache , stiff neck , nausea , vomiting , sensitivity light",antibiotics,"neurologist,neurosurgeon",high
+mononucleosis,"fever , sore throat , fatigue , swollen lymph node , rash","there is no cure for mononucleosis,but symptoms can be treated with rest,fluids,over-the-counter medications",family doctor,low
+pneumonia,"fever , cough , shortness breath , chest pain , fatigue",antibiotics,"family doctor,pulmonologist",moderate
+rabies,"fever , headache , muscle ache , tingling bite site , difficulty swallowing , hydrophobia , aerophobia",rabies vaccine,doctor,high
+salmonella,"fever , diarrhea , abdominal cramp , nausea , vomiting",antibiotics,family doctor ,low
+shingles,painful rash follows nerve path,antiviral medication,"family doctor,dermatologist ",low
+tuberculosis (tb),"cough go away , fever , night sweat , weight loss , fatigue , chest pain",antibiotics,"family doctor,pulmonologist",high
+urinary tract infection (uti),"painful urination , burning , frequent urination , urgency urinate , blood urine",antibiotics,urologist,low
+varicose veins,"swollen , twisted vein , usually leg","surgery,compression stockings,lifestyle changes",vascular surgeon,varies
+warts ,"raised , rough growth skin","over-the-counter medications,prescription medications,cryotherapy,laser therapy",dermatologist,low
+yeast infection,"itching , burning , discharge vaginor penis","over-the-counter medications,prescription medications","urologist,gynecologist",low
+acanthamoebkeratitis,"pain , redness , inflammation eye","antibiotics,antifungals,surgery",ophthalmologist ,low
+acute appendicitis,"pain lower right abdomen , nausea , vomiting , fever",appendectomy,surgeon,high
+acute kidney injury (aki) ,decreased kidney function,"treatment for the underlying cause,such as dehydration,infection,medication side effect ",nephrologist ,varies
+alzheimer's disease,"memory loss , confusion , difficulty thinking , change personality behavior","there is no cure for alzheimer's disease,but there are treatments that can help manage the symptoms ",neurologist,high
+anemia,"fatigue , shortness breath , pale skin , lightheadedness , dizziness","treatment for anemidepends on the type of anemia,but may include medication,blood transfusions,surgery",hematologist,varies
+aortic aneurysm,"bulge wall aorta , largest artery body",surgery,vascular surgeon,high
+bacterial meningitis ,"fever , headache , stiff neck , nausea , vomiting , sensitivity light",antibiotics,"neurologist,neurosurgeon",high
+bipolar disorder,"extreme mood swing , manito depression","treatment for bipolar disorder may include medication,therapy,combination of both","psychologist,psychiatrist",varies
+cervical cancer ,"abnormal pap test result , abnormal vaginal bleeding , pain sex","surgery,chemotherapy,radiation therapy",gynecologist ,high
+colorectal cancer,"change bowel habit , diarrhea , constipation , narrowing stool , blood stool , abdominal pain , unexplained weight loss","surgery,chemotherapy,radiation therapy",gastroenterologist,high
+dementia,"memory loss , confusion , difficulty thinking , change personality behavior","there is no cure for dementia,but there are treatments that can help manage the symptoms",neurologist ,varies
+erectile dysfunction,"difficulty getting , keeping erection","medication,lifestyle changes,surgery ",urologist,varies
+fibromyalgi,"widespread pain , fatigue , tenderness","medication,lifestyle changes ",rheumatologist ,varies
+glaucoma,"increased pressure eye damage optic nerve , lead vision loss","medication,surgery ", ophthalmologist,varies
+heart failure,condition heart pump blood well,"medication,lifestyle changes,surgery",cardiologist,high
+kidney disease,damage kidney lead kidney failure,"treatment for the underlying cause,such as high blood pressure,diabetes,an infection",nephrologist,varies
+lung disease,"condition affect lung , make difficult breathe","treatment for the underlying cause,such as asthma,chronic obstructive pulmonary disease (copd),pneumonia",pulmonologist,varies
+parkinson's disease,"tremor , slow movement , stiffness , difficulty balance , coordination"," medication,lifestyle changes",neurologist ,varies
+peptic ulcer disease ,"pain upper abdomen , indigestion , nausea , vomiting","medication,lifestyle changes,surgery ",gastroenterologist,varies
+peripheral artery disease,"pain , numbness , tingling arm leg","medication,lifestyle changes,surgery",vascular surgeon,varies
+pneumonia,"fever , cough , shortness breath , chest pain , fatigue",antibiotics,"family doctor,pulmonologist",moderate
+prostate cancer,"difficulty urinating , blood urine , pain back hip , erectile dysfunction"," surgery,radiation therapy,hormone therapy",urologist,high
+rheumatoid arthritis,"pain , swelling , stiffness joint","medication,lifestyle changes",rheumatologist,varies
+stroke,"sudden weakness , numbness one side body , difficulty speaking , confusion , trouble seeing one eye , severe headache","treatment for the underlying cause,such as clot-busting medication,surgery","neurologist,neurosurgeon",high
+stomach cancer,"pain upper abdomen , indigestion , nausea , vomiting , weight loss","surgery,chemotherapy,radiation therapy",gastroenterologist ,high
+thyroid cancer,"lump neck , hoarseness , fatigue , weight loss , unexplained heat intolerance , sensitivity cold","surgery,radiation therapy,hormone therapy",endocrinologist,high
+ulcerative colitis,"diarrhea , bloody stool , abdominal pain , weight loss","medication,surgery",gastroenterologist ,varies
+warts,"raised , rough growth skin","over-the-counter medications,prescription medications,cryotherapy,laser therapy", dermatologist,low
+atopic dermatitis,"itchy , red , inflamed skin","medication,lifestyle changes", dermatologist,varies
+celiac disease,"diarrhea , bloating , weight loss , fatigue , abdominal pain",gluten-free diet,gastroenterologist,varies
+chronic kidney disease,"fatigue , shortness breath , swelling , high blood pressure , change urination","treatment for the underlying cause,such as high blood pressure,diabetes,an infection",nephrologist,varies
+crohn's disease,"diarrhea , bloody stool , abdominal pain , weight loss","medication,surgery",gastroenterologist,varies
+epilepsy ,seizure,"medication,surgery",neurologist,varies
+fibromyalgia,"widespread pain , fatigue , tenderness","medication,lifestyle changes",rheumatologist,varies
+graves' disease,"hyperthyroidism , overactive thyroid","medication,surgery",endocrinologist,varies
+hashimoto's thyroiditis ,"hypothyroidism , underactive thyroid",medication,endocrinologist,varies
+lupus,chronic autoimmune disease affect part body,"medication,lifestyle changes",rheumatologist ,varies
