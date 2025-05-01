@@ -1,0 +1,10 @@
+# Ignore a specific folder
+venv/
+kidney_stone_detection_model.h5
+PaddleOCR/
+models/
+
+.env
+
+medical-healthcare-chatbot-firebase-adminsdk-jwfa3-6c8b3fe2f4.json
+medical-healthcare-chatbot-firebase-adminsdk-jwfa3-57aae9c0bf.json

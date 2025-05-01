@@ -1,0 +1,39 @@
+.tiptap-editor .ProseMirror {
+    outline: none;
+    min-height: 200px;
+}
+
+.tiptap-editor .ProseMirror img {
+    max-width: 100%;
+    height: auto;
+}
+
+.tiptap-editor p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+.tiptap-editor .ProseMirror:focus {
+    outline: none;
+}
+
+.tiptap-editor .ProseMirror > * + * {
+    margin-top: 0.75em;
+}
+
+.tiptap-editor .ProseMirror ul,
+.tiptap-editor .ProseMirror ol {
+    padding: 0 1rem;
+}
+
+.tiptap-editor .ProseMirror h1,
+.tiptap-editor .ProseMirror h2,
+.tiptap-editor .ProseMirror h3,
+.tiptap-editor .ProseMirror h4,
+.tiptap-editor .ProseMirror h5,
+.tiptap-editor .ProseMirror h6 {
+    line-height: 1.1;
+}
