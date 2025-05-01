@@ -52,8 +52,8 @@ function ChatBot({ isOpen }) {
   const { isOpen: isOpenModal, onOpen: onOpenModal, onClose: onCloseModal } = useDisclosure();
   const [selectedOption, setSelectedOption] = useState('symptoms');
   const [symptoms, setSymptoms] = useState([]);
-  const [prediction, setPrediction] = useState(null);
-  const [doctorPrediction, setDoctorPrediction] = useState(null);
+  // const [prediction, setPrediction] = useState(null);
+  // const [doctorPrediction, setDoctorPrediction] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const [messages, setMessages] = useState([]);
@@ -193,8 +193,31 @@ function ChatBot({ isOpen }) {
         axios.post('http://127.0.0.1:5001/predict_doctor', requestBody)
       ]);
 
-      setPrediction(riskResponse.data);
-      setDoctorPrediction(doctorResponse.data);
+      // Set the risk level prediction using document.getElementById
+      const riskLevelText = document.getElementById('risk-level-text');
+      const riskLevelBadge = document.getElementById('risk-level-badge');
+      const riskLevelContainer = document.getElementById('risk-level-container');
+
+      if (riskResponse.data) {
+        // riskLevelText.innerText = `${riskResponse.data.risk_level.toUpperCase()}`;
+        riskLevelBadge.textContent = riskResponse.data.risk_level.toUpperCase();
+        // riskLevelBadge.colorScheme = getRiskLevelColor(riskResponse.data.risk_level);
+        riskLevelBadge.style.backgroundColor = getRiskLevelColor(riskResponse.data.risk_level);
+        // riskLevelBadge.setAttribute('colorScheme', getRiskLevelColor(riskResponse.data.risk_level));
+        riskLevelContainer.style.display = 'block'; // Show the container
+      }
+
+      // Set the doctor prediction using document.getElementById
+      const doctorPredictionText = document.getElementById('doctor-prediction-text');
+      const doctorPredictionContainer = document.getElementById('doctor-prediction-container');
+
+      if (doctorResponse.data) {
+        doctorPredictionText.innerText = doctorResponse.data.predicted_doctor
+          .split(' ')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        doctorPredictionContainer.style.display = 'block'; // Show the container
+      }
     } catch (error) {
       toast({
         title: 'Error',
@@ -208,18 +231,21 @@ function ChatBot({ isOpen }) {
     }
   };
 
-
-
   const handleFindDoctors = () => {
-    // Format the doctor type to ensure proper URL encoding
-    const formattedSpecialization = doctorPrediction.predicted_doctor
+    const doctorTextElement = document.getElementById('doctor-prediction-text');
+  
+    if (!doctorTextElement) return;
+  
+    const predictedDoctor = doctorTextElement.innerText;
+  
+    const formattedSpecialization = predictedDoctor
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-'); // Replace spaces with hyphens
-
-    // Navigate to the appointments page with the specialization as a query parameter
+  
     navigate(`/patient/appointments?specialization=${formattedSpecialization}`);
   };
+  
 
   return (
     <SlideFade in={isOpen} offsetY="20px">
@@ -413,38 +439,34 @@ function ChatBot({ isOpen }) {
 
         {selectedOption === 'symptoms' ? (
           <VStack width="100%" spacing={3} height="100%" overflowY="auto">
-            {prediction && (
-              <Box width="100%" p={3} borderRadius="md" bg="gray.50">
-                <Text fontWeight="bold" fontSize="sm" mb={1}>
-                  Risk Level:{' '}
-                  <Badge colorScheme={getRiskLevelColor(prediction.risk_level)}>
-                    {prediction.risk_level.toUpperCase()}
-                  </Badge>
-                </Text>
-              </Box>
-            )}
+            <Box id="risk-level-container" width="100%" p={3} borderRadius="md" bg="gray.50" style={{ display: 'none' }}>
+              <Text id="risk-level-text" fontWeight="bold" fontSize="sm" mb={1}>
+                Risk Level:{' '}
+                <Badge id="risk-level-badge" colorScheme="">
+                  {/* Risk level will be populated here */}
+                </Badge>
+              </Text>
+            </Box>
 
-            {doctorPrediction && (
-              <Box width="100%" p={3} borderRadius="md" bg="gray.50">
-                <Text fontWeight="bold" fontSize="sm" mb={1}>
-                  Recommended Specialist:
-                </Text>
-                <Text fontSize="sm" mb={2}>
-                  {doctorPrediction.predicted_doctor.split('_').map(word =>
-                    word.charAt(0).toUpperCase() + word.slice(1)
-                  ).join(' ')}
-                </Text>
-                <Button
-                  colorScheme="blue"
-                  size="xs"
-                  onClick={handleFindDoctors}
-                  width="full"
-                >
-                  Find Doctors
-                </Button>
-              </Box>
-            )}
+            <Box id="doctor-prediction-container" width="100%" p={3} borderRadius="md" bg="gray.50" style={{ display: 'none' }}>
+              <Text fontWeight="bold" fontSize="sm" mb={1}>
+                Recommended Specialist:
+              </Text>
+              <Text id="doctor-prediction-text" fontSize="sm" mb={2}>
+                {/* Doctor prediction will be populated here */}
+              </Text>
+              <Button
+                colorScheme="blue"
+                size="xs"
+                id="find-doctors-button"
+                width="full"
+                onClick={handleFindDoctors}
+              >
+                Find Doctors
+              </Button>
+            </Box>
           </VStack>
+
         ) : selectedOption === 'health-query' ? (
 
           <Box
