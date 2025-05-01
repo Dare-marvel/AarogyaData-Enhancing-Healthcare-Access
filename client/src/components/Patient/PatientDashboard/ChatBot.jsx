@@ -22,14 +22,15 @@ import {
   ModalOverlay,
   Input,
   HStack,
-  Spinner
+  Divider
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+// import { AddIcon } from '@chakra-ui/icons';
 import { MdMedicalServices, MdBiotech, MdQuestionAnswer, MdImage } from 'react-icons/md';
-import { FaChevronLeft, FaPlusSquare, FaPaperPlane } from 'react-icons/fa';
-import { FaBrain, FaLungs, FaHeart, FaStethoscope } from 'react-icons/fa';
-import { GiKidneys, GiLiver, GiAwareness } from "react-icons/gi";
+// import { FaChevronLeft, FaPlusSquare, FaPaperPlane } from 'react-icons/fa';
+import { FaBrain } from 'react-icons/fa';
+import { GiKidneys } from "react-icons/gi";
 import { FaRegHandPaper } from "react-icons/fa";
+import { MdSick, MdHealthAndSafety, MdImageSearch } from "react-icons/md";
 
 import ChipInput from '../../ChipInput';
 import axios from 'axios';
@@ -70,6 +71,32 @@ function ChatBot({ isOpen }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [ImagePrediction, setImagePrediction] = useState(null);
   const { progress, uploadImage, handleDelete } = useImageUpload();
+
+  const options = [
+    {
+      id: "symptoms",
+      label: "Symptoms",
+      icon: MdSick,
+      color: "red.500"
+    },
+    {
+      id: "health-query",
+      label: "Health Query",
+      icon: MdHealthAndSafety,
+      color: "green.500"
+    },
+    {
+      id: "image-scan",
+      label: "Image Scan",
+      icon: MdImageSearch,
+      color: "blue.500"
+    }
+  ];
+
+  const handleSelect = (optionId) => {
+    setSelectedOption(optionId);
+    onCloseModal();
+  };
 
   const organs = [
     { name: 'Kidney', endpoint: 'http://127.0.0.1:5001/predict_kidney_image', icon: GiKidneys },
@@ -233,19 +260,19 @@ function ChatBot({ isOpen }) {
 
   const handleFindDoctors = () => {
     const doctorTextElement = document.getElementById('doctor-prediction-text');
-  
+
     if (!doctorTextElement) return;
-  
+
     const predictedDoctor = doctorTextElement.innerText;
-  
+
     const formattedSpecialization = predictedDoctor
       .toLowerCase()
       .trim()
       .replace(/\s+/g, '-'); // Replace spaces with hyphens
-  
+
     navigate(`/patient/appointments?specialization=${formattedSpecialization}`);
   };
-  
+
 
   return (
     <SlideFade in={isOpen} offsetY="20px">
@@ -389,51 +416,42 @@ function ChatBot({ isOpen }) {
           )}
         </Flex>
 
-        <Modal
-          isOpen={isOpenModal}
-          onClose={onCloseModal}
-          placement="left"
-          size="md"
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Select Functionality</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <VStack spacing={4}>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setSelectedOption('symptoms');
-                    onCloseModal();
-                  }}
-                >
-                  Symptoms
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => {
-                    setSelectedOption('health-query');
-                    onCloseModal();
-                  }}
-                >
-                  Health Query
-                </Button>
-                <Button variant="ghost"
-                  onClick={() => {
-                    setSelectedOption('image-scan');
-                    onCloseModal();
-                  }}
-                >
-                  Image Scan
-                </Button>
-              </VStack>
+        <Modal isOpen={isOpenModal} onClose={onCloseModal} size="xs" isCentered>
+          <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(5px)" />
+          <ModalContent borderRadius="lg" shadow="xl">
+            <ModalHeader fontSize="lg" pb={2}>Select Functionality</ModalHeader>
+            <ModalCloseButton size="sm" />
+            <Divider />
+            <ModalBody py={4}>
+              <Flex direction="column" gap={2}>
+                {options.map((option) => (
+                  <Button
+                    key={option.id}
+                    variant="ghost"
+                    justifyContent="flex-start"
+                    height="48px"
+                    onClick={() => handleSelect(option.id)}
+                    _hover={{ bg: "gray.100" }}
+                    borderRadius="md"
+                  >
+                    <HStack spacing={3}>
+                      <Flex
+                        w="32px"
+                        h="32px"
+                        alignItems="center"
+                        justifyContent="center"
+                        borderRadius="md"
+                        bg={option.color}
+                        color="white"
+                      >
+                        <option.icon size={18} />
+                      </Flex>
+                      <Text fontWeight="medium">{option.label}</Text>
+                    </HStack>
+                  </Button>
+                ))}
+              </Flex>
             </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="blue" mr={3} onClick={onCloseModal}>
-                Close
-              </Button>
-            </ModalFooter>
           </ModalContent>
         </Modal>
 

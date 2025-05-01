@@ -302,6 +302,53 @@ def predict_kidney_image():
 #####################################    Brain Tumor      ##################################################
 
 
+# @app.route('/predict_brain_tumor', methods=['POST'])
+# def predict_brain_tumor():
+    # try:
+    #     # Get the JSON request which contains the image URL
+    #     data = request.get_json()
+    #     image_url = data.get('image_url', None)
+
+    #     if not image_url:
+    #         logging.error("No image URL provided")
+    #         return jsonify({'error': 'No image URL provided'}), 400
+
+    #     # Load the pre-trained Brain Tumor model
+    #     brain_tumor_model = load_model('models/Brain_Tumor_Model.h5')
+
+    #     # Download the image from the provided URL
+    #     response = requests.get(image_url)
+    #     if response.status_code != 200:
+    #         logging.error("Failed to download image from URL")
+    #         return jsonify({'error': 'Failed to download image'}), 400
+
+    #     # Open the image using PIL from the byte stream
+    #     img = Image.open(BytesIO(response.content))
+
+    #     # Preprocess the image
+    #     img = img.resize((224, 224))  # Resize image to the model's input size
+    #     img_array = image.img_to_array(img)
+    #     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    #     img_array = img_array / 255.0  # Normalize pixel values to [0, 1]
+
+    #     # Predict the brain tumor category
+    #     predictions = brain_tumor_model.predict(img_array)
+    #     index = np.argmax(predictions[0])
+    #     outputs = ['No Tumor', 'Tumor']
+    #     predicted_label = outputs[index]
+
+    #     # Log the prediction
+    #     logging.debug(f"Prediction: {predicted_label}")
+
+    #     # Return the prediction as a JSON response
+    #     return jsonify({'predicted_class': predicted_label}), 200
+
+    # except Exception as e:
+    #     # Log stack trace
+    #     logging.error(f"Error occurred: {str(e)}", exc_info=True)
+    #     return jsonify({'error': str(e)}), 500
+
+
 @app.route('/predict_brain_tumor', methods=['POST'])
 def predict_brain_tumor():
     try:
@@ -324,6 +371,10 @@ def predict_brain_tumor():
 
         # Open the image using PIL from the byte stream
         img = Image.open(BytesIO(response.content))
+
+        # Convert image to RGB mode if it's not already
+        if img.mode != 'RGB':
+            img = img.convert('RGB')
 
         # Preprocess the image
         img = img.resize((224, 224))  # Resize image to the model's input size
@@ -348,8 +399,8 @@ def predict_brain_tumor():
         logging.error(f"Error occurred: {str(e)}", exc_info=True)
         return jsonify({'error': str(e)}), 500
 
-
 #####################################  Skin cancer   ##################################################
+
 
 @app.route('/predict_skin_cancer', methods=['POST'])
 def predict_skin_cancer():
@@ -494,10 +545,11 @@ def generate_pdf(prescription_id, medicines, patient_name, doctor_name):
 
     token = blob.generate_signed_url(expiration=36000).split(
         "?")[1]  # Extract the token from the signed URL
-    file_path = f"Prescription/{prescription_id}/pdf/medical_prescription_{prescription_id}.pdf".replace('/', '%2F')
+    file_path = f"Prescription/{prescription_id}/pdf/medical_prescription_{prescription_id}.pdf".replace(
+        '/', '%2F')
     firebase_storage_url = (
-    f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/"
-    f"{file_path}?alt=media&{token}"
+        f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/"
+        f"{file_path}?alt=media&{token}"
     )
 
     # Store prescription details in MongoDB
@@ -539,7 +591,6 @@ def generate_qr_code(prescription_id):
     auth_token = os.getenv("TWILIO_AUTH_TOKEN")
     phone_number = os.getenv("TWILIO_PHONE_NUMBER")
     whatsapp_from = os.getenv("TWILIO_WHATSAPP_FROM")
-
 
     # Send SMS and WhatsApp messages using Twilio
     client = Client(account_sid, auth_token)
