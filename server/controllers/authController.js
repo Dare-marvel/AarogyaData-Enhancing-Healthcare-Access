@@ -113,12 +113,15 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRE }
     );
 
+    const dialogflowSessionId = `user-${user._id}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
     res.json({
       id: user._id,
       name: user.username,
       email: user.email,
       token: token,
-      role: role
+      role: role,
+      dialogflowSessionId: dialogflowSessionId,
     });
   } catch (err) {
     console.error(err);

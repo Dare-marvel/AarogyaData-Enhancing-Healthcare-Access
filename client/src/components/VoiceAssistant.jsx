@@ -32,6 +32,8 @@ const VoiceAssistant = () => {
     const startSound = new Audio('/sounds/start.mp3');
     startSound.play();
 
+    const user = JSON.parse(localStorage.getItem('userInfo'));
+
     recognition.onresult = async (event) => {
       const userMessage = event.results[0][0].transcript;
       try {
@@ -39,9 +41,10 @@ const VoiceAssistant = () => {
           {
             message: userMessage,
             languageCode: language,
+            sessionid : user.dialogflowSessionId,
           },
           {
-            headers: { 'x-auth-token': JSON.parse(localStorage.getItem('userInfo')).token },
+            headers: { 'x-auth-token': user.token },
           }
         );
 

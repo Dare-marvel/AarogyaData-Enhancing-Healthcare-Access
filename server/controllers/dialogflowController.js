@@ -9,44 +9,46 @@ const sessionClient = new dialogflow.SessionsClient({
   keyFilename: process.env.DIALOGFLOW_KEY_PATH,
 });
 
+
+
 // Book Appointment with Doctor
 const getDoctorAvailability = async (doctorName) => {
   console.log('Input doctorName:', doctorName);
-  
+
   const doctor = await Doctor.findOne({ username: doctorName });
   if (!doctor) throw new Error('Doctor not found.');
-  
+
   // Extract available dates for the current month
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
-  
+
   console.log('Current month:', currentMonth, 'Current year:', currentYear);
-  
+
   // The doctor.clinicSchedules is a Map, so we need to work with its entries
   const availableDates = [];
-  
+
   // Convert Map entries to array for easier processing
   const scheduleEntries = Array.from(doctor.clinicSchedules.entries());
-  
+
   // console.log('Clinic schedules:', doctor.clinicSchedules);
-  
+
   for (const [dateString, scheduleData] of scheduleEntries) {
     // Use the date object directly from scheduleData
     const dateObj = new Date(scheduleData.date);
-    
+
     const isInCurrentMonth = dateObj.getMonth() === currentMonth;
     const isInCurrentYear = dateObj.getFullYear() === currentYear;
-    
+
     // console.log(`Checking date: ${dateString}`);
     // console.log(`Parsed Date Object:`, dateObj);
     // console.log(`Is in current month: ${isInCurrentMonth}, Is in current year: ${isInCurrentYear}`);
-    
+
     if (isInCurrentMonth && isInCurrentYear) {
       availableDates.push(dateString);
     }
   }
-  
+
   // console.log('Available dates:', availableDates);
   return availableDates;
 };
@@ -92,9 +94,12 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
 };
 
 const handleDialogflowRequest = async (req, res) => {
-  const { message, languageCode } = req.body;
-  const sessionId = uuid.v4();
-  const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
+  const { message, languageCode, sessionId } = req.body;
+  // const sessionId = uuid.v4();
+  const sessionPath = sessionClient.projectAgentSessionPath(
+    projectId,
+    sessionId || `session-${Date.now()}`
+  );
   const userRole = req.user.role;
 
   // console.log(`Received message: ${message}, Language code: ${languageCode}, Role: ${userRole}`);
@@ -116,7 +121,14 @@ const handleDialogflowRequest = async (req, res) => {
     const intent = result.intent.displayName;
     // console.log(`DialogFlow response: ${JSON.stringify(result, null, 2)}`);
 
-    console.log("checking params",result.parameters)
+    let responseData = {
+      fulfillmentText: result.fulfillmentText,
+      intentName: intent,
+      parameters: parameters,
+      allRequiredParamsPresent: result.allRequiredParametersPresent
+    };
+
+    console.log("checking params", result.parameters)
 
     // Check if the intent is navigation-related
     // if (intent === 'Navigate') {
@@ -173,8 +185,17 @@ const handleDialogflowRequest = async (req, res) => {
             res.json({ fulfillmentText: `Sorry, Dr. ${doctorName} has no available dates this month.` });
           } else {
             const dateResponse = availableDates.join(', ');
-            res.json({
-              fulfillmentText: `Dr. ${doctorName} is available on the following dates: ${dateResponse}. Please select a date.`,
+            return res.json({
+              fulfillmentText: availableDates.length
+                ? `Dr. ${doctorName} is available on: ${dateResponse}. Please say a date.`
+                : `Sorry, Dr. ${doctorName} has no available dates this month.`,
+              intent: 'BookAppointmentInitial',
+              parameters: { DoctorName: doctorName },
+              context: {
+                nextExpected: 'GetAppointmentDate', // Tells frontend what to expect next
+                availableDates: availableDates,  // For possible UI display
+                step: 1                         // Booking flow step number
+              }
             });
           }
         } catch (error) {
@@ -197,8 +218,18 @@ const handleDialogflowRequest = async (req, res) => {
             const slotResponse = availableSlots
               .map(slot => `${slot.startTime} - ${slot.endTime} (${slot.venue})`)
               .join(', ');
-            res.json({
-              fulfillmentText: `Available slots on ${date} are: ${slotResponse}. Please choose a slot.`,
+            return res.json({
+              fulfillmentText: availableSlots.length
+                ? `Available slots on ${date}: ${availableSlots.map(s => `${slotResponse}`).join(', ')}. Please choose a time.`
+                : `No slots available on ${date}. Try another date.`,
+              intent: 'GetAppointmentDate',
+              parameters: { DoctorName: doctorName, date: date },
+              context: {
+                nextExpected: 'time_selection',
+                availableSlots: availableSlots, // Array of {startTime, endTime, venue}
+                step: 2,
+                selectedDate: date
+              }
             });
           }
         } catch (error) {
@@ -218,7 +249,20 @@ const handleDialogflowRequest = async (req, res) => {
           res.json({ fulfillmentText: bookingResponse.message });
         } catch (error) {
           console.error('Error booking appointment:', error);
-          res.json({ fulfillmentText: `Could not book the appointment. Please try again later.` });
+          return res.json({
+            fulfillmentText: `Your appointment with Dr. ${doctorName} on ${date} at ${startTime} is confirmed! ${bookingResult.confirmationCode ? 'Code: ' + bookingResult.confirmationCode : ''}`,
+            intent: 'GetTimeSlot',
+            parameters: { DoctorName: doctorName, date: date, startTime: startTime },
+            context: {
+              bookingComplete: true,
+              confirmation: bookingResult,
+              step: 3
+            },
+            navigation: {  // Optional: Redirect to appointments page
+              shouldNavigate: true,
+              url: '/patient/appointments'
+            }
+          });
         }
         break;
       }
