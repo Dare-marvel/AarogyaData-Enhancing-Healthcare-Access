@@ -125,3 +125,43 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.validateToken = async (req, res) => {
+  try {
+    const { id, role } = req.user;
+    
+    // Fetch the user based on role to confirm they still exist
+    let user;
+    switch (role) {
+      case 'patient':
+        user = await Patient.findById(id);
+        break;
+      case 'doctor':
+        user = await Doctor.findById(id);
+        break;
+      case 'pharmacist':
+        user = await Pharmacist.findById(id);
+        break;
+      default:
+        return res.status(400).json({ message: 'Invalid role' });
+    }
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Return validation success with role information
+    return res.json({
+      valid : true,
+      user: {
+        id: user._id,
+        name: user.username,
+        email: user.email,
+        role: role
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ valid: false, message: 'Server error' });
+  }
+};

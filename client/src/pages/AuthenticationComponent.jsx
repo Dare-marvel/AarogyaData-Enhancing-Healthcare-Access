@@ -20,10 +20,10 @@ import {
   TagCloseButton,
   IconButton,
 } from '@chakra-ui/react';
-import { motion } from 'framer-motion';
+// import { motion } from 'framer-motion';
 import { FaUserMd, FaHospitalUser, FaPills, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 import { AiOutlineLogin } from "react-icons/ai";
-import { AddIcon, ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from '@chakra-ui/icons';
+import { AddIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import ChipInput from '../components/ChipInput';
 
 const specializations = [
@@ -95,7 +95,7 @@ function AuthComponent() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { email, password });
       // localStorage.setItem('token', response.data.token);
       // localStorage.setItem('role', response.data.role);
       localStorage.setItem("userInfo", JSON.stringify(response.data));
@@ -115,7 +115,7 @@ function AuthComponent() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
         username,
         email,
         password,
