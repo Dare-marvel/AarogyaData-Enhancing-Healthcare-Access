@@ -3,7 +3,7 @@ import {
   Box,
   VStack,
   Button,
-  SimpleGrid,
+  // SimpleGrid,
   Text,
   Progress,
   Flex,
@@ -17,12 +17,13 @@ import {
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
+  // ModalFooter,
   ModalHeader,
   ModalOverlay,
   Input,
   HStack,
-  Divider
+  Divider,
+  Spinner
 } from '@chakra-ui/react';
 // import { AddIcon } from '@chakra-ui/icons';
 import { MdMedicalServices, MdBiotech, MdQuestionAnswer, MdImage } from 'react-icons/md';
@@ -69,7 +70,7 @@ function ChatBot({ isOpen }) {
   // For image scan 
   const [selectedOrgan, setSelectedOrgan] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [ImagePrediction, setImagePrediction] = useState(null);
+  // const [ImagePrediction, setImagePrediction] = useState(null);
   const { progress, uploadImage, handleDelete } = useImageUpload();
 
   const options = [
@@ -106,7 +107,13 @@ function ChatBot({ isOpen }) {
 
   const handleOrganSelect = (organ) => {
     setSelectedOrgan(organ);
-    setImagePrediction(null); // Reset prediction on organ change
+
+    const resultBox = document.getElementById("prediction-result-box");
+    if (resultBox) {
+      resultBox.innerHTML = ""; 
+      resultBox.style.display = "none"; 
+    }
+
   };
 
   const handleFileChange = (e) => {
@@ -122,26 +129,37 @@ function ChatBot({ isOpen }) {
     }
 
     try {
+      setLoading(true); // Show spinner
+
       const imageUrl = await uploadImage(selectedFile);
       const response = await axios.post(selectedOrgan.endpoint, { image_url: imageUrl });
-      setImagePrediction(response.data);
-      console.log("description ", response.data)
 
-      const urlParts = imageUrl.split('%2F'); // Split at '%2F' (URL-encoded '/')
-      let fileName = urlParts[urlParts.length - 1].split('?')[0]; // Get the last part and strip query params
+      const resultBox = document.getElementById("prediction-result-box");
+      if (resultBox) {
+        resultBox.innerHTML = `
+          <strong>Prediction Result</strong><br/>
+          Class: ${response.data.predicted_class || "N/A"}<br/>
+          ${response.data.description ? `<em style="color: gray;">${response.data.description}</em>` : ""}
+        `;
+        resultBox.style.display = "block";
+      }
 
-      // console.log("checking url ",imageUrl)
-      // console.log("checking filename ",fileName)
+      const urlParts = imageUrl.split('%2F');
+      let fileName = urlParts[urlParts.length - 1].split('?')[0];
 
       if (fileName) {
         await handleDelete(fileName);
       }
-
     } catch (error) {
       console.error('Error during prediction:', error);
       alert('An error occurred while processing the image.');
+    } finally {
+      const fileInput = document.getElementById("image-upload-input");
+      fileInput.value = null;
+      setLoading(false); // Hide spinner
     }
   };
+
 
   // Image Scan ends 
 
@@ -221,7 +239,7 @@ function ChatBot({ isOpen }) {
       ]);
 
       // Set the risk level prediction using document.getElementById
-      const riskLevelText = document.getElementById('risk-level-text');
+      // const riskLevelText = document.getElementById('risk-level-text');
       const riskLevelBadge = document.getElementById('risk-level-badge');
       const riskLevelContainer = document.getElementById('risk-level-container');
 
@@ -393,7 +411,7 @@ function ChatBot({ isOpen }) {
               </Flex>
 
               {/* File Input */}
-              <Input type="file" onChange={handleFileChange} w="full" />
+              <Input id="image-upload-input" disabled={loading} type="file" onChange={handleFileChange} w="full" />
 
               {/* Progress Bar */}
               {progress > 0 && progress < 100 && (
@@ -407,6 +425,7 @@ function ChatBot({ isOpen }) {
               <Button
                 onClick={handleSubmit}
                 colorScheme="blue"
+                isLoading={loading}
                 w="full"
                 isDisabled={!selectedOrgan || !selectedFile}
               >
@@ -518,27 +537,22 @@ function ChatBot({ isOpen }) {
             <div ref={messagesEndRef} />
           </Box>
         ) : selectedOption === 'image-scan' ? (
-          <VStack width="100%" spacing={3} height="100%" >
-            {ImagePrediction !== null && (
-              <Box
-                textAlign="center"
-                mt={2}
-                p={2}
-                borderWidth="1px"
-                borderRadius="md"
-                bg="gray.100"
-                fontSize="sm"
-              >
-                <Text fontWeight="semibold">Prediction Result</Text>
-                <Text mt={1}>Class: {ImagePrediction.predicted_class}</Text>
-                {ImagePrediction.description && (
-                  <Text mt={1} fontStyle="italic" color="gray.600">
-                    {ImagePrediction.description}
-                  </Text>
-                )}
-              </Box>
-            )}
+          <VStack width="100%" spacing={3} height="100%">
+            (
+            <Box
+              id="prediction-result-box"
+              textAlign="center"
+              mt={2}
+              p={2}
+              borderWidth="1px"
+              borderRadius="md"
+              bg="gray.100"
+              fontSize="sm"
+              style={{ display: 'none' }} // Hidden initially
+            />
+            )
           </VStack>
+
         ) : (
           <Text>Please select a functionality from the menu.</Text>
         )}
