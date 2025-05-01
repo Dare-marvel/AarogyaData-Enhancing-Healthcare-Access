@@ -25,6 +25,6 @@ dist-ssr
 .env
 
 # Keys
-server/config/healthcare-chatbot-djxv-2269e0cfa0f0.json
+server/config/healthcare-chatbot-djxv-144adb970983.json
 server/config/*.json
 config/*.json

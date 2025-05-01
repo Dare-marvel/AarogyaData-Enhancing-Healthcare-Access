@@ -13,34 +13,41 @@ const sessionClient = new dialogflow.SessionsClient({
 const getDoctorAvailability = async (doctorName) => {
   console.log('Input doctorName:', doctorName);
   
-  // Find the doctor in the database
   const doctor = await Doctor.findOne({ username: doctorName });
   if (!doctor) throw new Error('Doctor not found.');
   
-  console.log('Doctor found:', doctor);
-
   // Extract available dates for the current month
   const today = new Date();
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
   
   console.log('Current month:', currentMonth, 'Current year:', currentYear);
-  console.log('Clinic schedules:', doctor.clinicSchedules);
-
-  const availableDates = Object.keys(doctor.clinicSchedules)
-    .filter((date) => {
-      const dateObj = new Date(date);
-      const isInCurrentMonth = dateObj.getMonth() === currentMonth;
-      const isInCurrentYear = dateObj.getFullYear() === currentYear;
-
-      console.log(`Checking date: ${date}`);
-      console.log(`Parsed Date Object:`, dateObj);
-      console.log(`Is in current month: ${isInCurrentMonth}, Is in current year: ${isInCurrentYear}`);
-
-      return isInCurrentMonth && isInCurrentYear;
-    });
-
-  console.log('Available dates:', availableDates);
+  
+  // The doctor.clinicSchedules is a Map, so we need to work with its entries
+  const availableDates = [];
+  
+  // Convert Map entries to array for easier processing
+  const scheduleEntries = Array.from(doctor.clinicSchedules.entries());
+  
+  // console.log('Clinic schedules:', doctor.clinicSchedules);
+  
+  for (const [dateString, scheduleData] of scheduleEntries) {
+    // Use the date object directly from scheduleData
+    const dateObj = new Date(scheduleData.date);
+    
+    const isInCurrentMonth = dateObj.getMonth() === currentMonth;
+    const isInCurrentYear = dateObj.getFullYear() === currentYear;
+    
+    // console.log(`Checking date: ${dateString}`);
+    // console.log(`Parsed Date Object:`, dateObj);
+    // console.log(`Is in current month: ${isInCurrentMonth}, Is in current year: ${isInCurrentYear}`);
+    
+    if (isInCurrentMonth && isInCurrentYear) {
+      availableDates.push(dateString);
+    }
+  }
+  
+  // console.log('Available dates:', availableDates);
   return availableDates;
 };
 
@@ -109,6 +116,8 @@ const handleDialogflowRequest = async (req, res) => {
     const intent = result.intent.displayName;
     // console.log(`DialogFlow response: ${JSON.stringify(result, null, 2)}`);
 
+    console.log("checking params",result.parameters)
+
     // Check if the intent is navigation-related
     // if (intent === 'Navigate') {
     //   const requestedPage = result.parameters.fields.Page.stringValue;
@@ -159,6 +168,7 @@ const handleDialogflowRequest = async (req, res) => {
 
         try {
           const availableDates = await getDoctorAvailability(doctorName);
+          console.log("available dates in intent", availableDates)
           if (!availableDates.length) {
             res.json({ fulfillmentText: `Sorry, Dr. ${doctorName} has no available dates this month.` });
           } else {
@@ -168,6 +178,7 @@ const handleDialogflowRequest = async (req, res) => {
             });
           }
         } catch (error) {
+          console.log("Got some error here")
           console.error('Error fetching doctor availability:', error);
           res.json({ fulfillmentText: `Could not fetch availability for Dr. ${doctorName}. Please try again later.` });
         }
@@ -228,7 +239,7 @@ const handleDialogflowRequest = async (req, res) => {
         if (allowedPages[userRole]?.includes(requestedPage)) {
           const newUrl = `/${userRole}/${requestedPage}`;
           res.send({
-            reply: result.fulfillmentText,
+            fulfillmentText: result.fulfillmentText,
             navigation: {
               url: newUrl,
               shouldNavigate: true
@@ -236,7 +247,7 @@ const handleDialogflowRequest = async (req, res) => {
           });
         } else {
           res.send({
-            reply: "Sorry, you don't have access to this page. Please request a page that's available in your navigation menu.",
+            fulfillmentText: "Sorry, you don't have access to this page. Please request a page that's available in your navigation menu.",
             navigation: {
               shouldNavigate: false
             }
@@ -247,7 +258,7 @@ const handleDialogflowRequest = async (req, res) => {
 
       default:
         res.send({
-          reply: result.fulfillmentText,
+          fulfillmentText: result.fulfillmentText,
           navigation: {
             shouldNavigate: false
           }

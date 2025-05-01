@@ -46,7 +46,7 @@ const VoiceAssistant = () => {
         );
 
         // Play audio response
-        const utterance = new SpeechSynthesisUtterance(res.data.reply);
+        const utterance = new SpeechSynthesisUtterance(res.data.fulfillmentText);
         utterance.lang = language;
         
         // Handle navigation after speech ends
@@ -61,7 +61,7 @@ const VoiceAssistant = () => {
 
         window.speechSynthesis.speak(utterance);
 
-        console.log("navigation url",res.data.navigation.url)
+        // console.log("navigation url",res.data.navigation.url)
 
         // If speech synthesis fails or is not supported, ensure navigation still works
         if (!window.speechSynthesis.speaking) {
