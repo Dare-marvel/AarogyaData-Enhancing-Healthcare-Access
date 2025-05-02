@@ -286,14 +286,30 @@ exports.getPatientAppointments = async (req, res) => {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
-    const now = new Date();
+    // const now = new Date();
     let isModified = false;
+
+    // test
+    // doctor.clinicSchedules.forEach((schedule, key) => {
+    //       schedule.slots.forEach(slot => {
+            // if (moment(slot.endTime).isBefore(moment()) && slot.status !== 'cancelled') {
+            //   slot.status = 'completed';
+            // }
+    //       });
+    //     });
+
+        // test
 
     // Combine date and endTime for comparison
     patient.appointments.forEach(appointment => {
-      const endDateTime = combineDateAndTime(appointment.date, appointment.endTime);
+      // const endDateTime = combineDateAndTime(appointment.date, appointment.endTime);
 
-      if (endDateTime < now && appointment.status !== 'completed') {
+      // if (endDateTime < now && appointment.status !== 'cancelled') {
+      //   appointment.status = 'completed';
+      //   isModified = true;
+      // }
+
+      if (moment(appointment.endTime).isBefore(moment()) && appointment.status !== 'cancelled') {
         appointment.status = 'completed';
         isModified = true;
       }

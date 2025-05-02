@@ -148,7 +148,7 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
     date : scheduleDate.date,
     startTime: slot.startTime,
     endTime: slot.endTime,
-    venue: slot.venue,
+    venue: scheduleDate.venue,
     status: 'scheduled',
   });
   await patient.save();
