@@ -58,8 +58,40 @@ const getAvailableSlots = async (doctorName, date) => {
   const doctor = await Doctor.findOne({ username: doctorName });
   if (!doctor) throw new Error('Doctor not found.');
 
-  const scheduleDate = doctor.clinicSchedules.get(date);
-  if (!scheduleDate) throw new Error('No schedule found for this date.');
+  if (!doctor.clinicSchedules || doctor.clinicSchedules.size === 0) {
+    console.log('Doctor has no clinic schedules');
+    throw new Error('No schedules available for this doctor.');
+  }
+
+  // Extract YYYY-MM-DD format from the input date
+  let formattedDate;
+  
+  if (date instanceof Date) {
+    // If it's a Date object
+    formattedDate = date.toISOString().split('T')[0];
+  } else if (typeof date === 'string') {
+    if (date.includes('T')) {
+      // If it's an ISO string with time part (2025-05-02T12:00:00+05:00)
+      formattedDate = new Date(date).toISOString().split('T')[0];
+    } else if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // If it's already in YYYY-MM-DD format
+      formattedDate = date;
+    } else {
+      // Any other string format
+      formattedDate = new Date(date).toISOString().split('T')[0];
+    }
+  }
+  
+  // console.log(`Formatted date for lookup: ${formattedDate}`);
+  
+  // Try getting the schedule with the formatted date
+  const scheduleDate = doctor.clinicSchedules.get(formattedDate);
+
+  if (!scheduleDate) {
+    console.log(`No schedule found for date: ${formattedDate}`);
+    console.log('Available dates are: ' + [...doctor.clinicSchedules.keys()].join(', '));
+    throw new Error('No schedule found for this date.');
+  }
 
   return scheduleDate.slots.filter((slot) => slot.status === 'available');
 };
@@ -94,7 +126,7 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
 };
 
 const handleDialogflowRequest = async (req, res) => {
-  const { message, languageCode, sessionId } = req.body;
+  const { message, languageCode, sessionId, inputContexts } = req.body;
   // const sessionId = uuid.v4();
   const sessionPath = sessionClient.projectAgentSessionPath(
     projectId,
@@ -112,23 +144,33 @@ const handleDialogflowRequest = async (req, res) => {
         languageCode: languageCode || 'en-US',
       },
     },
+    queryParams: {
+      contexts: req.body.contexts || [], 
+    }
   };
+
+  console.log("Cehcking message", message)
 
   try {
     const responses = await sessionClient.detectIntent(request);
     const result = responses[0].queryResult;
     const parameters = result.parameters.fields;
     const intent = result.intent.displayName;
+    const outputContexts = result.outputContexts;
+
+    // const simpleparams = structjson.structProtoToJson(result.parameters);
+
+    // console.log("Checking params", simpleparams)
     // console.log(`DialogFlow response: ${JSON.stringify(result, null, 2)}`);
 
-    let responseData = {
-      fulfillmentText: result.fulfillmentText,
-      intentName: intent,
-      parameters: parameters,
-      allRequiredParamsPresent: result.allRequiredParametersPresent
-    };
+    // let responseData = {
+    //   fulfillmentText: result.fulfillmentText,
+    //   intentName: intent,
+    //   parameters: parameters,
+    //   allRequiredParamsPresent: result.allRequiredParametersPresent
+    // };
 
-    console.log("checking params", result.parameters)
+    console.log("checking params", intent)
 
     // Check if the intent is navigation-related
     // if (intent === 'Navigate') {
@@ -192,8 +234,9 @@ const handleDialogflowRequest = async (req, res) => {
               intent: 'BookAppointmentInitial',
               parameters: { DoctorName: doctorName },
               context: {
-                nextExpected: 'GetAppointmentDate', // Tells frontend what to expect next
-                availableDates: availableDates,  // For possible UI display
+                nextExpected: 'GetAppointmentDate',
+                outputContexts: outputContexts,
+                availableDates: availableDates,
                 step: 1                         // Booking flow step number
               }
             });
@@ -207,25 +250,29 @@ const handleDialogflowRequest = async (req, res) => {
       }
 
       case 'GetAppointmentDate': {
-        const doctorName = parameters.DoctorName.stringValue;
+        const doctorName = inputContexts?.doctorName;
+        console.log("checking doctor name in app date ", doctorName)
         const date = parameters.date.stringValue;
+
+        console.log("checking date ", date)
 
         try {
           const availableSlots = await getAvailableSlots(doctorName, date);
           if (!availableSlots.length) {
             res.json({ fulfillmentText: `No slots are available for Dr. ${doctorName} on ${date}. Please choose another date.` });
           } else {
-            const slotResponse = availableSlots
-              .map(slot => `${slot.startTime} - ${slot.endTime} (${slot.venue})`)
-              .join(', ');
+            // const slotResponse = availableSlots
+            //   .map(slot => `${slot.startTime} - ${slot.endTime} (${slot.venue})`)
+            //   .join(', ');
             return res.json({
               fulfillmentText: availableSlots.length
-                ? `Available slots on ${date}: ${availableSlots.map(s => `${slotResponse}`).join(', ')}. Please choose a time.`
+                ? `Available slots on ${date}: Are displayed on the screen. Please choose a time slot.`
                 : `No slots available on ${date}. Try another date.`,
               intent: 'GetAppointmentDate',
               parameters: { DoctorName: doctorName, date: date },
               context: {
                 nextExpected: 'time_selection',
+                outputContexts: outputContexts,
                 availableSlots: availableSlots, // Array of {startTime, endTime, venue}
                 step: 2,
                 selectedDate: date
@@ -239,9 +286,9 @@ const handleDialogflowRequest = async (req, res) => {
         break;
       }
 
-      case 'GetTimeSlot': {
-        const doctorName = parameters.DoctorName.stringValue;
-        const date = parameters.date.stringValue;
+      case 'GetAppointmentTimeSlot': {
+        // const doctorName = parameters.DoctorName.stringValue;
+        // const date = parameters.date.stringValue;
         const startTime = parameters.startTime.stringValue;
 
         try {
@@ -255,6 +302,7 @@ const handleDialogflowRequest = async (req, res) => {
             parameters: { DoctorName: doctorName, date: date, startTime: startTime },
             context: {
               bookingComplete: true,
+              outputContexts: outputContexts,
               confirmation: bookingResult,
               step: 3
             },
