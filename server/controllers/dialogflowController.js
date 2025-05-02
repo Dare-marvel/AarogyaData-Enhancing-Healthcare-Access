@@ -65,7 +65,7 @@ const getAvailableSlots = async (doctorName, date) => {
 
   // Extract YYYY-MM-DD format from the input date
   let formattedDate;
-  
+
   if (date instanceof Date) {
     // If it's a Date object
     formattedDate = date.toISOString().split('T')[0];
@@ -81,9 +81,9 @@ const getAvailableSlots = async (doctorName, date) => {
       formattedDate = new Date(date).toISOString().split('T')[0];
     }
   }
-  
+
   // console.log(`Formatted date for lookup: ${formattedDate}`);
-  
+
   // Try getting the schedule with the formatted date
   const scheduleDate = doctor.clinicSchedules.get(formattedDate);
 
@@ -96,19 +96,24 @@ const getAvailableSlots = async (doctorName, date) => {
   return scheduleDate.slots.filter((slot) => slot.status === 'available');
 };
 
-// const formatUTCTime = (isoString) => {
-//   const date = new Date(isoString);
-//   const hours = String(date.getUTCHours()).padStart(2, '0');
-//   const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-//   return `${hours}:${minutes}`; // e.g., "21:57"
-// };
+const formatUTCDate = (isoString) => {
+  const date = new Date(isoString);
+  return date.toISOString().split('T')[0]; // e.g., "2025-05-02"
+};
+
+const formatUTCTime = (isoString) => {
+  const date = new Date(isoString);
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  return `${hours}:${minutes}`; // e.g., "21:57"
+};
 
 const bookAppointment = async (doctorName, date, time, patientId) => {
   const doctor = await Doctor.findOne({ username: doctorName });
   if (!doctor) throw new Error('Doctor not found.');
 
   let formattedDate;
-  
+
   if (date instanceof Date) {
     // If it's a Date object
     formattedDate = date.toISOString().split('T')[0];
@@ -131,9 +136,9 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
   const slot = scheduleDate.slots.find((slot) => {
     const formattedSlotTime = new Date(slot.startTime).toISOString().slice(11, 16); // Extracts HH:MM in UTC
     const formattedTime = time.slice(11, 16); // Extracts HH:MM (already UTC)
-  
+
     console.log(`Comparing slot time (${formattedSlotTime}) with time (${formattedTime})`);
-  
+
     return formattedSlotTime === formattedTime && slot.status === 'available';
   });
   if (!slot) throw new Error('Slot not available.');
@@ -145,7 +150,7 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
   const patient = await Patient.findById(patientId);
   patient.appointments.push({
     doctorId: doctor._id,
-    date : scheduleDate.date,
+    date: scheduleDate.date,
     startTime: slot.startTime,
     endTime: slot.endTime,
     venue: scheduleDate.venue,
@@ -176,7 +181,7 @@ const handleDialogflowRequest = async (req, res) => {
       },
     },
     queryParams: {
-      contexts: req.body.contexts || [], 
+      contexts: req.body.contexts || [],
     }
   };
 
@@ -260,7 +265,7 @@ const handleDialogflowRequest = async (req, res) => {
             const dateResponse = availableDates.join(', ');
             return res.json({
               fulfillmentText: availableDates.length
-                ? `Dr. ${doctorName} is available on: ${dateResponse}. Please say a date.`
+                ? `Dr. ${doctorName} is available on: ${formatUTCDate(dateResponse)}. Please say a date.`
                 : `Sorry, Dr. ${doctorName} has no available dates this month.`,
               intent: 'BookAppointmentInitial',
               parameters: { DoctorName: doctorName },
@@ -297,7 +302,7 @@ const handleDialogflowRequest = async (req, res) => {
             //   .join(', ');
             return res.json({
               fulfillmentText: availableSlots.length
-                ? `Available slots on ${date}: Are displayed on the screen. Please choose a time slot.`
+                ? `Available slots on ${formatUTCDate(date)}: Are displayed on the screen. Please choose a time slot.`
                 : `No slots available on ${date}. Try another date.`,
               intent: 'GetAppointmentDate',
               parameters: { DoctorName: doctorName, date: date },
@@ -326,12 +331,12 @@ const handleDialogflowRequest = async (req, res) => {
         const date = inputContexts?.selectedDate;
         const doctorName = inputContexts?.doctorName;
 
-        console.log("checking date ", date)
+        console.log("checking date ", startTime)
 
         try {
           const bookingResult = await bookAppointment(doctorName, date, startTime, req.user.id);
           return res.json({
-            fulfillmentText: `Your appointment with Dr. ${doctorName} on ${date} at ${startTime} is confirmed!`,
+            fulfillmentText: `Your appointment with Dr. ${doctorName} on ${formatUTCDate(date)} at ${startTime.slice(11, 16)} is confirmed!`,
             intent: 'GetTimeSlot',
             parameters: { DoctorName: doctorName, date: date, startTime: startTime },
             context: {

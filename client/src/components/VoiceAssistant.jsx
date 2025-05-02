@@ -95,6 +95,14 @@ const VoiceAssistant = () => {
         });
 
         setContexts(res.data.context.outputContexts || []);
+        // // document.getElementById("booking-panel").style.display = "block";
+        // // document.getElementById("booking-confirmation").style.display = "block";
+
+        // setTimeout(function () {
+        //   document.getElementById("booking-confirmation").style.display = "none";
+        //   // document.getElementById("booking-panel").style.display = "none";
+        // }, 5000); // 5000 milliseconds = 5 seconds
+
         break;
 
       default:
@@ -156,8 +164,8 @@ const VoiceAssistant = () => {
         }
 
         // Auto-restart listening if we're in a selection step
-        if (['select-date', 'select-slot'].includes(bookingState.step)) {
-          setTimeout(() => startListening(), 1000);
+        if (['select-date'].includes(bookingState.step)) {
+          setTimeout(() => startListening(), 500);
         }
       });
 
@@ -210,7 +218,10 @@ const VoiceAssistant = () => {
 
   const handleSlotSelection = (slot) => {
     stopListening();
+    document.getElementById("booking-panel").style.display = "none";
+    document.getElementById("select-slot").style.display = "none";
     sendToDialogflow(slot.formatted.startTime);
+
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -274,7 +285,7 @@ const VoiceAssistant = () => {
               isListening ? (
                 <img src="/images/siri.gif" alt="Listening..." width="45px" height="45px" />
               ) : (
-                <img src="/images/siri.gif" alt="Mic" width="30px" height="30px" />
+                <img src="/images/siri-halt.png" alt="Mic" width="38px" height="30px" />
               )
             }
           />
@@ -295,6 +306,7 @@ const VoiceAssistant = () => {
           boxShadow="xl"
           p="4"
           zIndex="overlay"
+          id='booking-panel'
         >
           {bookingState.isProcessing ? (
             <Flex justify="center" align="center" height="100px">
@@ -327,7 +339,7 @@ const VoiceAssistant = () => {
               )}
 
               {bookingState.step === 'select-slot' && (
-                <VStack spacing={3} align="stretch">
+                <VStack spacing={3} align="stretch" id='select-slot'>
                   <Text fontSize="lg" fontWeight="bold">
                     Select a time slot for {formatUTCDate(bookingState.selectedDate)}
                   </Text>
@@ -368,15 +380,15 @@ const VoiceAssistant = () => {
                 </VStack>
               )}
 
-              {bookingState.step === 'confirmation' && (
-                <VStack spacing={3} align="stretch">
-                  <Text fontSize="lg" fontWeight="bold" color="green.500">
-                    Appointment Confirmed!
-                  </Text>
-                  <Text>
-                    With Dr. {bookingState.doctorName} on {bookingState.selectedDate}
-                  </Text>
-                  {bookingState.confirmation?.confirmationCode && (
+              {/* {bookingState.step === 'confirmation' && ( */}
+              <VStack spacing={3} align="stretch" id='booking-confirmation' style={{ display: 'none' }}>
+                <Text fontSize="lg" fontWeight="bold" color="green.500">
+                  Appointment Confirmed!
+                </Text>
+                <Text>
+                  With Dr. {bookingState.doctorName} on {formatUTCDate(bookingState.selectedDate)}
+                </Text>
+                {/* {bookingState.confirmation?.confirmationCode && (
                     <Text>
                       Confirmation code: <Badge colorScheme="green">{bookingState.confirmation.confirmationCode}</Badge>
                     </Text>
@@ -384,12 +396,12 @@ const VoiceAssistant = () => {
                   <Button
                     colorScheme="blue"
                     mt={4}
-                    onClick={() => navigate('/my-appointments')}
+                    onClick={() => navigate('/patient/appointments')}
                   >
                     View My Appointments
-                  </Button>
-                </VStack>
-              )}
+                  </Button> */}
+              </VStack>
+              {/* )} */}
             </>
           )}
         </Box>
