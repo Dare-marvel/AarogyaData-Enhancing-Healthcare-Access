@@ -23,7 +23,7 @@ const getDoctorAvailability = async (doctorName) => {
   const currentMonth = today.getMonth();
   const currentYear = today.getFullYear();
 
-  console.log('Current month:', currentMonth, 'Current year:', currentYear);
+  // console.log('Current month:', currentMonth, 'Current year:', currentYear);
 
   // The doctor.clinicSchedules is a Map, so we need to work with its entries
   const availableDates = [];
@@ -96,16 +96,46 @@ const getAvailableSlots = async (doctorName, date) => {
   return scheduleDate.slots.filter((slot) => slot.status === 'available');
 };
 
+// const formatUTCTime = (isoString) => {
+//   const date = new Date(isoString);
+//   const hours = String(date.getUTCHours()).padStart(2, '0');
+//   const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+//   return `${hours}:${minutes}`; // e.g., "21:57"
+// };
+
 const bookAppointment = async (doctorName, date, time, patientId) => {
   const doctor = await Doctor.findOne({ username: doctorName });
   if (!doctor) throw new Error('Doctor not found.');
 
-  const scheduleDate = doctor.clinicSchedules.get(date);
+  let formattedDate;
+  
+  if (date instanceof Date) {
+    // If it's a Date object
+    formattedDate = date.toISOString().split('T')[0];
+  } else if (typeof date === 'string') {
+    if (date.includes('T')) {
+      // If it's an ISO string with time part (2025-05-02T12:00:00+05:00)
+      formattedDate = new Date(date).toISOString().split('T')[0];
+    } else if (date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // If it's already in YYYY-MM-DD format
+      formattedDate = date;
+    } else {
+      // Any other string format
+      formattedDate = new Date(date).toISOString().split('T')[0];
+    }
+  }
+
+  const scheduleDate = doctor.clinicSchedules.get(formattedDate);
   if (!scheduleDate) throw new Error('No schedule found for this date.');
 
-  const slot = scheduleDate.slots.find(
-    (slot) => slot.startTime === time && slot.status === 'available'
-  );
+  const slot = scheduleDate.slots.find((slot) => {
+    const formattedSlotTime = new Date(slot.startTime).toISOString().slice(11, 16); // Extracts HH:MM in UTC
+    const formattedTime = time.slice(11, 16); // Extracts HH:MM (already UTC)
+  
+    console.log(`Comparing slot time (${formattedSlotTime}) with time (${formattedTime})`);
+  
+    return formattedSlotTime === formattedTime && slot.status === 'available';
+  });
   if (!slot) throw new Error('Slot not available.');
 
   slot.patientId = patientId;
@@ -115,9 +145,10 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
   const patient = await Patient.findById(patientId);
   patient.appointments.push({
     doctorId: doctor._id,
-    date,
-    startTime: time,
-    venue: scheduleDate.venue,
+    date : scheduleDate.date,
+    startTime: slot.startTime,
+    endTime: slot.endTime,
+    venue: slot.venue,
     status: 'scheduled',
   });
   await patient.save();
@@ -149,7 +180,7 @@ const handleDialogflowRequest = async (req, res) => {
     }
   };
 
-  console.log("Cehcking message", message)
+  console.log("Checking message", message)
 
   try {
     const responses = await sessionClient.detectIntent(request);
@@ -170,7 +201,7 @@ const handleDialogflowRequest = async (req, res) => {
     //   allRequiredParamsPresent: result.allRequiredParametersPresent
     // };
 
-    console.log("checking params", intent)
+    console.log("checking intent", intent)
 
     // Check if the intent is navigation-related
     // if (intent === 'Navigate') {
@@ -217,12 +248,12 @@ const handleDialogflowRequest = async (req, res) => {
 
     switch (intent) {
       case 'BookAppointmentInitial': {
-        console.log("checking parameters ", parameters)
+        // console.log("checking parameters ", parameters)
         const doctorName = parameters.DoctorName.stringValue;
 
         try {
           const availableDates = await getDoctorAvailability(doctorName);
-          console.log("available dates in intent", availableDates)
+          // console.log("available dates in intent", availableDates)
           if (!availableDates.length) {
             res.json({ fulfillmentText: `Sorry, Dr. ${doctorName} has no available dates this month.` });
           } else {
@@ -242,7 +273,7 @@ const handleDialogflowRequest = async (req, res) => {
             });
           }
         } catch (error) {
-          console.log("Got some error here")
+          // console.log("Got some error here")
           console.error('Error fetching doctor availability:', error);
           res.json({ fulfillmentText: `Could not fetch availability for Dr. ${doctorName}. Please try again later.` });
         }
@@ -251,10 +282,10 @@ const handleDialogflowRequest = async (req, res) => {
 
       case 'GetAppointmentDate': {
         const doctorName = inputContexts?.doctorName;
-        console.log("checking doctor name in app date ", doctorName)
         const date = parameters.date.stringValue;
+        // console.log("checking date in app date ", date)
 
-        console.log("checking date ", date)
+        // console.log("checking date ", date)
 
         try {
           const availableSlots = await getAvailableSlots(doctorName, date);
@@ -289,7 +320,13 @@ const handleDialogflowRequest = async (req, res) => {
       case 'GetAppointmentTimeSlot': {
         // const doctorName = parameters.DoctorName.stringValue;
         // const date = parameters.date.stringValue;
-        const startTime = parameters.startTime.stringValue;
+        console.log("checking start time in time slot", parameters)
+
+        const startTime = parameters.time.stringValue;
+        const date = inputContexts?.selectedDate;
+        const doctorName = inputContexts?.doctorName;
+
+        console.log("checking date ", date)
 
         try {
           const bookingResponse = await bookAppointment(doctorName, date, startTime, req.user.id);

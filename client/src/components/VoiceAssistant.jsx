@@ -210,7 +210,7 @@ const VoiceAssistant = () => {
 
   const handleSlotSelection = (slot) => {
     stopListening();
-    sendToDialogflow(slot.startTime);
+    sendToDialogflow(slot.formatted.startTime);
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -221,6 +221,18 @@ const VoiceAssistant = () => {
     setLanguage(newLanguage);
     recognition.lang = newLanguage;
     closeModal();
+  };
+
+  const formatUTCDate = (isoString) => {
+    const date = new Date(isoString);
+    return date.toISOString().split('T')[0]; // e.g., "2025-05-02"
+  };
+
+  const formatUTCTime = (isoString) => {
+    const date = new Date(isoString);
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+    return `${hours}:${minutes}`; // e.g., "21:57"
   };
 
   return (
@@ -317,23 +329,38 @@ const VoiceAssistant = () => {
               {bookingState.step === 'select-slot' && (
                 <VStack spacing={3} align="stretch">
                   <Text fontSize="lg" fontWeight="bold">
-                    Select a time slot for {bookingState.selectedDate}
+                    Select a time slot for {formatUTCDate(bookingState.selectedDate)}
                   </Text>
                   <Text color="gray.600">Available slots:</Text>
                   <VStack spacing={2}>
-                    {bookingState.availableSlots.map((slot) => (
-                      <Button
-                        key={slot.startTime}
-                        onClick={() => handleSlotSelection(slot)}
-                        width="full"
-                        variant="outline"
-                      >
-                        <Flex justify="space-between" width="full">
-                          <Text>{slot.startTime} - {slot.endTime}</Text>
-                          <Badge colorScheme="blue">{slot.venue}</Badge>
-                        </Flex>
-                      </Button>
-                    ))}
+                    {bookingState.availableSlots.map((slot) => {
+                      const date = formatUTCDate(slot.startTime);
+                      const startTime = formatUTCTime(slot.startTime);
+                      const endTime = formatUTCTime(slot.endTime);
+
+                      return (
+                        <Button
+                          key={slot._id}
+                          onClick={() =>
+                            handleSlotSelection({
+                              ...slot,
+                              formatted: {
+                                date,
+                                startTime,
+                                endTime,
+                              },
+                            })
+                          }
+                          width="full"
+                          variant="outline"
+                        >
+                          <Flex justify="space-between" width="full" wrap="wrap">
+                            <Text>{startTime} - {endTime}</Text>
+                            {slot.venue && <Badge colorScheme="blue">{slot.venue}</Badge>}
+                          </Flex>
+                        </Button>
+                      );
+                    })}
                   </VStack>
                   <Text fontSize="sm" color="gray.500" mt={2}>
                     Or say the time you prefer
