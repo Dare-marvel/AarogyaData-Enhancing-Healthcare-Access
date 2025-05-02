@@ -329,12 +329,9 @@ const handleDialogflowRequest = async (req, res) => {
         console.log("checking date ", date)
 
         try {
-          const bookingResponse = await bookAppointment(doctorName, date, startTime, req.user.id);
-          res.json({ fulfillmentText: bookingResponse.message });
-        } catch (error) {
-          console.error('Error booking appointment:', error);
+          const bookingResult = await bookAppointment(doctorName, date, startTime, req.user.id);
           return res.json({
-            fulfillmentText: `Your appointment with Dr. ${doctorName} on ${date} at ${startTime} is confirmed! ${bookingResult.confirmationCode ? 'Code: ' + bookingResult.confirmationCode : ''}`,
+            fulfillmentText: `Your appointment with Dr. ${doctorName} on ${date} at ${startTime} is confirmed!`,
             intent: 'GetTimeSlot',
             parameters: { DoctorName: doctorName, date: date, startTime: startTime },
             context: {
@@ -347,6 +344,13 @@ const handleDialogflowRequest = async (req, res) => {
               shouldNavigate: true,
               url: '/patient/appointments'
             }
+          });
+        } catch (error) {
+          console.error('Error booking appointment:', error);
+          res.json({
+            fulfillmentText: `Booking failed for ${startTime}. Please try again.`,
+            intent: 'error',
+            context: { error: true, step: 3 }
           });
         }
         break;
