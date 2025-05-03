@@ -3,6 +3,7 @@ venv/
 kidney_stone_detection_model.h5
 PaddleOCR/
 models/
+uploads/
 
 .env
 
