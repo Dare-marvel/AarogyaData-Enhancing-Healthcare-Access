@@ -42,10 +42,10 @@ import { useImageUpload } from '../../../hooks/useImageUpload';
 
 const getRiskLevelColor = (riskLevel) => {
   const colors = {
-    low: 'green',
-    moderate: 'yellow',
-    high: 'red',
-    varies: 'purple'
+    low: '#c6ffb3',
+    moderate: '#ffff99',
+    high: '#ffb3b3',
+    varies: '#ffb3ff'
   };
   return colors[riskLevel] || 'gray';
 };
@@ -100,9 +100,9 @@ function ChatBot({ isOpen }) {
   };
 
   const organs = [
-    { name: 'Kidney', endpoint: 'http://127.0.0.1:5001/predict_kidney_image', icon: GiKidneys },
-    { name: 'Brain', endpoint: 'http://localhost:5001/predict_brain_tumor', icon: FaBrain },
-    { name: 'Skin', endpoint: 'http://localhost:5001/predict_skin_cancer', icon: FaRegHandPaper },
+    { name: 'Kidney', endpoint: `${import.meta.env.VITE_PYTHON_API_URL}/predict_kidney_image`, icon: GiKidneys },
+    { name: 'Brain', endpoint: `${import.meta.env.VITE_PYTHON_API_URL}/predict_brain_tumor`, icon: FaBrain },
+    { name: 'Skin', endpoint: `${import.meta.env.VITE_PYTHON_API_URL}/predict_skin_cancer`, icon: FaRegHandPaper },
   ];
 
   const handleOrganSelect = (organ) => {

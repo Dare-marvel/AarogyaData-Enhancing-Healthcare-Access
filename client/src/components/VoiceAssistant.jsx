@@ -22,6 +22,7 @@ import { SettingsIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
 import { keyframes } from '@emotion/react';
 import axios from 'axios';
+import { IoMdClose } from "react-icons/io";
 
 const waveformAnimation = keyframes`
   0% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); }
@@ -314,6 +315,18 @@ const VoiceAssistant = () => {
             </Flex>
           ) : (
             <>
+              <Box position="absolute" top="2" right="2">
+                <IconButton
+                  icon={<IoMdClose />}
+                  aria-label="Cancel booking"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    stopListening();
+                    setBookingState({ step: null });
+                  }}
+                />
+              </Box>
               {bookingState.step === 'select-date' && (
                 <VStack spacing={3} align="stretch">
                   <Text fontSize="lg" fontWeight="bold">

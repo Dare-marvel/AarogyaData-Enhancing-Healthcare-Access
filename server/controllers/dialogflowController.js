@@ -1,7 +1,8 @@
 const dialogflow = require('@google-cloud/dialogflow');
-const uuid = require('uuid');
+// const uuid = require('uuid');
 const Doctor = require('../models/Doctor');
 const Patient = require('../models/Patient');
+const moment = require('moment');
 
 // Set up DialogFlow client
 const projectId = process.env.DIALOGFLOW_PROJECT_ID;
@@ -44,7 +45,7 @@ const getDoctorAvailability = async (doctorName) => {
     // console.log(`Parsed Date Object:`, dateObj);
     // console.log(`Is in current month: ${isInCurrentMonth}, Is in current year: ${isInCurrentYear}`);
 
-    if (isInCurrentMonth && isInCurrentYear) {
+    if (isInCurrentMonth && isInCurrentYear && moment(dateObj).isSameOrAfter(moment())) {
       availableDates.push(dateString);
     }
   }
@@ -93,7 +94,9 @@ const getAvailableSlots = async (doctorName, date) => {
     throw new Error('No schedule found for this date.');
   }
 
-  return scheduleDate.slots.filter((slot) => slot.status === 'available');
+  return scheduleDate.slots.filter((slot) =>
+    slot.status === 'available' && moment(slot.startTime).isSameOrAfter(moment())
+  );
 };
 
 const formatUTCDate = (isoString) => {
@@ -143,6 +146,9 @@ const bookAppointment = async (doctorName, date, time, patientId) => {
   });
   if (!slot) throw new Error('Slot not available.');
 
+  if (slot.status !== 'available') {
+    throw new Error('Slot is not available for booking.');
+  }
   slot.patientId = patientId;
   slot.status = 'scheduled';
   await doctor.save();
@@ -265,7 +271,7 @@ const handleDialogflowRequest = async (req, res) => {
             const dateResponse = availableDates.join(', ');
             return res.json({
               fulfillmentText: availableDates.length
-                ? `Dr. ${doctorName} is available on: ${formatUTCDate(dateResponse)}. Please say a date.`
+                ? `Dr. ${doctorName} is available on: ${dateResponse}. Please say a date.`
                 : `Sorry, Dr. ${doctorName} has no available dates this month.`,
               intent: 'BookAppointmentInitial',
               parameters: { DoctorName: doctorName },

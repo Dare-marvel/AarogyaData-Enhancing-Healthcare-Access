@@ -3,6 +3,7 @@
 ### Setting up the .env file
 ```
 VITE_API_URL="http://localhost:5000"
+VITE_PYTHON_API_URL="http://localhost:5001"
 VITE_API_KEY=
 VITE_AUTH_DOMAIN=
 VITE_PROJECT_ID=
