@@ -42,7 +42,7 @@ function App() {
   return (
     <Box>
       <Navbar />
-      <Box p={4}>
+      <Box >
         <Routes>
           {/* Public routes */}
           <Route path="/auth" element={<AuthComponent />} />
