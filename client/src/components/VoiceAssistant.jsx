@@ -380,15 +380,15 @@ const VoiceAssistant = () => {
                 </VStack>
               )}
 
-              {/* {bookingState.step === 'confirmation' && ( */}
-              <VStack spacing={3} align="stretch" id='booking-confirmation' style={{ display: 'none' }}>
-                <Text fontSize="lg" fontWeight="bold" color="green.500">
-                  Appointment Confirmed!
-                </Text>
-                <Text>
-                  With Dr. {bookingState.doctorName} on {formatUTCDate(bookingState.selectedDate)}
-                </Text>
-                {/* {bookingState.confirmation?.confirmationCode && (
+              {/* {bookingState.step === 'confirmation' && (
+                <VStack spacing={3} align="stretch" id='booking-confirmation' style={{ display: 'none' }}>
+                  <Text fontSize="lg" fontWeight="bold" color="green.500">
+                    Appointment Confirmed!
+                  </Text>
+                  <Text>
+                    With Dr. {bookingState.doctorName} on {formatUTCDate(bookingState.selectedDate)}
+                  </Text>
+                  {bookingState.confirmation?.confirmationCode && (
                     <Text>
                       Confirmation code: <Badge colorScheme="green">{bookingState.confirmation.confirmationCode}</Badge>
                     </Text>
@@ -399,9 +399,9 @@ const VoiceAssistant = () => {
                     onClick={() => navigate('/patient/appointments')}
                   >
                     View My Appointments
-                  </Button> */}
-              </VStack>
-              {/* )} */}
+                  </Button>
+                </VStack>
+              )} */}
             </>
           )}
         </Box>

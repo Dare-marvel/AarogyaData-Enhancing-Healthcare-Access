@@ -64,7 +64,7 @@ const DoctorProfile = () => {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:5000/api/doctor/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/doctor/profile`, {
         method: 'GET',
         headers: {
           'x-auth-token': JSON.parse(localStorage.getItem('userInfo')).token
@@ -93,7 +93,7 @@ const DoctorProfile = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/doctor/profile', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/doctor/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

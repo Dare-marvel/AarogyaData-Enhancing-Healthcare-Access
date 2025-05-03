@@ -53,7 +53,7 @@ const AppointmentList = ({ appointments, onAppointmentCancelled }) => {
     const token = JSON.parse(userInfo).token;
     try {
       await axios.put(
-        `http://localhost:5000/api/patients/cancel/${appointmentId}`,
+        `${import.meta.env.VITE_API_URL}/api/patients/cancel/${appointmentId}`,
         {},
         {
           headers: { 'x-auth-token': token }

@@ -8,7 +8,7 @@ export const usePharmacistFileManagement = (id) => {
 
     const fetchUploadedFiles = async () => {
         try {
-            const { data } = await axios.get(`http://localhost:5000/api/prescription/files/${id}`);
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/prescription/files/${id}`);
             console.log(data);
             setUploadedPrescriptions(data);
             console.log(typeof uploadedPrescriptions);

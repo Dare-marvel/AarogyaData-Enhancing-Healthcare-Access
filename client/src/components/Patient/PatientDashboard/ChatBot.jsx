@@ -182,7 +182,7 @@ function ChatBot({ isOpen }) {
       setMessages(prev => [...prev, userMessage]);
       setInput('');
 
-      const response = await fetch('http://localhost:5000/api/patients/chat', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/patients/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

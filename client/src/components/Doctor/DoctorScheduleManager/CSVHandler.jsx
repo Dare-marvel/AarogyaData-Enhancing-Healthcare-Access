@@ -54,7 +54,7 @@ const CSVHandler = () => {
         }
 
         try {
-          const response = await fetch('http://localhost:5000/api/doctor/schedule/import', {
+          const response = await fetch(`${import.meta.env.VITE_API_URL}/api/doctor/schedule/import`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ const CSVHandler = () => {
       error: (error) => {
         toast({
           title: 'Error',
-          description: 'Failed to parse CSV file',
+          description: error,
           status: 'error',
           duration: 3000,
         });
@@ -96,7 +96,7 @@ const CSVHandler = () => {
 
   const handleExport = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/doctor/schedule/export', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/doctor/schedule/export`, {
         headers: {
           'x-auth-token': JSON.parse(localStorage.getItem('userInfo')).token
         }
@@ -210,7 +210,7 @@ const CSVHandler = () => {
           <VStack spacing={4} align="stretch">
             <Text fontWeight="bold">Import Schedule from CSV</Text>
             <Text fontSize="sm" color="gray.600">
-              Upload a CSV file with columns: date, time, venue, and isBooked
+              Upload a CSV file with columns: date, venue, startTime, endTime and status
             </Text>
             <HStack>
               <Input

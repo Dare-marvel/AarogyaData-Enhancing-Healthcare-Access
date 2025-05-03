@@ -50,7 +50,7 @@ const BookingModal = ({ isOpen, onClose, doctor, onAppointmentBooked }) => {
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/patients/doctor/schedule/${doctor._id}`, {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/patients/doctor/schedule/${doctor._id}`, {
           headers: { 'x-auth-token': user.token }
         });
         // console.log('Schedule data:', response.data);
@@ -99,7 +99,7 @@ const BookingModal = ({ isOpen, onClose, doctor, onAppointmentBooked }) => {
         .split('T')[0];
 
       await axios.post(
-        'http://localhost:5000/api/patients/book',
+        `${import.meta.env.VITE_API_URL}/api/patients/book`,
         {
           doctorId: doctor._id,
           date: localDate,

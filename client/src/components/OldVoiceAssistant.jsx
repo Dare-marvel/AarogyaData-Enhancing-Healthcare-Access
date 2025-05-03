@@ -37,7 +37,7 @@ const VoiceAssistant = () => {
     recognition.onresult = async (event) => {
       const userMessage = event.results[0][0].transcript;
       try {
-        const res = await axios.post('http://localhost:5000/api/dialogflow',
+        const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/dialogflow`,
           {
             message: userMessage,
             languageCode: language,

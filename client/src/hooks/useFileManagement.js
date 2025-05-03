@@ -8,7 +8,7 @@ export const useFileManagement = (patientId, type) => {
 
     const fetchUploadedFiles = async () => {
         try {
-            const { data } = await axios.get('http://localhost:5000/api/patients/files', {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/patients/files`, {
                 params: { patientId, fileType: type }
             });
             setUploadedDocs(data.files);
@@ -25,7 +25,7 @@ export const useFileManagement = (patientId, type) => {
             }
 
             const response = await axios.delete(
-                `http://localhost:5000/api/patients/files/${docId}`,
+                `${import.meta.env.VITE_API_URL}/api/patients/files/${docId}`,
                 {
                     data: { patientId, fileType: type }
                 }

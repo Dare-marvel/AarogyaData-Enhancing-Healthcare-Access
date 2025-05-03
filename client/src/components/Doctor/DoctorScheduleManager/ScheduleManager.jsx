@@ -86,7 +86,7 @@ const DoctorSchedule = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        'http://localhost:5000/api/doctor/schedules',
+        `${import.meta.env.VITE_API_URL}/api/doctor/schedules`,
         getAuthHeaders()
       );
       setSchedules(response.data);
@@ -179,7 +179,7 @@ const DoctorSchedule = () => {
       const formattedDate = moment(newSchedule.date).format('YYYY-MM-DD');
 
       await axios.post(
-        'http://localhost:5000/api/doctor/add-schedule',
+        `${import.meta.env.VITE_API_URL}/api/doctor/add-schedule`,
         {
           ...newSchedule,
           date: formattedDate,
@@ -221,7 +221,7 @@ const DoctorSchedule = () => {
       setLoading(true);
       if (action === 'delete') {
         await axios.put(
-          'http://localhost:5000/api/doctor/update-slot',
+          `${import.meta.env.VITE_API_URL}/api/doctor/update-slot`,
           {
             slotId,    // The MongoDB ObjectId of the specific slot
             status: 'cancelled',

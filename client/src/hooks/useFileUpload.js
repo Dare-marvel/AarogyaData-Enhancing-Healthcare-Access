@@ -148,7 +148,7 @@ export const useFileUpload = (patientId, type, onUploadSuccess, patientName) => 
 
     const saveFileLinksToDB = async (urlsWithNames) => {
         try {
-            await axios.post('http://localhost:5000/api/patients/files', {
+            await axios.post(`${import.meta.env.VITE_API_URL}/api/patients/files`, {
                 patientId,
                 fileType: type,
                 files: urlsWithNames

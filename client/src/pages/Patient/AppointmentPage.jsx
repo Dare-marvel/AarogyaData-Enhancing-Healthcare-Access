@@ -30,7 +30,7 @@ const AppointmentPage = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        let url = 'http://localhost:5000/api/patients/doctors';
+        let url = `${import.meta.env.VITE_API_URL}/api/patients/doctors`;
         
 
         // Add pagination parameters
@@ -68,7 +68,7 @@ const AppointmentPage = () => {
 
     const fetchAppointments = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/patients/patient', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/patients/patient`, {
           headers: { 'x-auth-token': user.token }
         });
         setAppointments(response.data);
@@ -91,7 +91,7 @@ const AppointmentPage = () => {
 
   const refreshAppointments = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/patients/patient', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/patients/patient`, {
         headers: { 'x-auth-token': user.token }
       });
       setAppointments(response.data);
