@@ -4,17 +4,17 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import {
   FaUserMd,
   FaUsers,
-  FaClinicMedical,
+  // FaClinicMedical,
   FaQrcode,
-  FaPrescription,
+  // FaPrescription,
   FaCalendarCheck,
   FaUser,
-  FaBoxes,
+  // FaBoxes,
   FaUserInjured,
   FaCalendarAlt,
   FaPrescriptionBottleAlt,
   FaInfo, FaHome, FaNewspaper,
-  FaFilePrescription
+  // FaFilePrescription
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { AuthState } from '../context/AuthContext';

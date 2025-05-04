@@ -231,7 +231,7 @@ const DoctorSchedule = () => {
         );
         await fetchSchedules();
       } else if (action === 'view-patient') {
-        window.location.href = `http://localhost:5173/doctor/my_patients?patientId=${patientId}`;
+        window.location.href = `/doctor/my_patients?patientId=${patientId}`;
       }
     } catch (error) {
       toast({
