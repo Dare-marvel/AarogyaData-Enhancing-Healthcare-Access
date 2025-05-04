@@ -419,8 +419,7 @@ const DoctorSchedule = () => {
                                   View Patient
                                 </Button>
                               )}
-                              {(getSlotStatus(slot) === "available" ||
-                                getSlotStatus(slot) === "cancelled") && (
+                              {(getSlotStatus(slot) === "available") && (
                                   <Button
                                     size="sm"
                                     height={6}
