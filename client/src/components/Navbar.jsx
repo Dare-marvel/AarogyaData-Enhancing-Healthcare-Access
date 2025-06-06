@@ -29,7 +29,7 @@ function Navbar() {
   const location = useLocation();
 
   const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('teal.500', 'teal.300');
+  // const borderColor = useColorModeValue('teal.500', 'teal.300');
 
   // Function to get role-specific icon and color
   const getRoleSpecifics = () => {
