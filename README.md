@@ -1,3 +1,6 @@
+## Project Demo Video
+[![Watch the video](https://img.youtube.com/vi/6TMEZ8hVFUY/maxresdefault.jpg)](https://youtu.be/6TMEZ8hVFUY)
+
 ## How to run client
 
 ### Setting up the .env file
