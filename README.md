@@ -1,3 +1,6 @@
+## Project Demo Video
+[![Watch the video](https://img.youtube.com/vi/6TMEZ8hVFUY/maxresdefault.jpg)](https://youtu.be/6TMEZ8hVFUY)
+
 ## How to run client
 
 ### Setting up the .env file
@@ -171,3 +174,6 @@ You are now back to the global Python environment.
 ```
 python app.py
 ```
+
+## How to setup Dialogflow
+In the Dialogflow_Object folder a zip file is provided just import it in the dialogflow and there you are ready to go.
